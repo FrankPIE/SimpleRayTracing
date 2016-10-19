@@ -33,6 +33,7 @@
 
 #include "resource.h"
 #include "RAII.hpp"
+#include <tchar.h>
 
 App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HWND parent, const UINT id)
 	: m_active_(false)
@@ -84,6 +85,8 @@ App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HW
 
 	rollback.Dismiss();
 
+	set_msg(_T("¿ÕÏÐ"));
+
 	MSG msg = { nullptr };
 
 	while (WM_QUIT != msg.message)
@@ -109,9 +112,19 @@ App::~App()
 	}
 }
 
+void App::set_msg(const std::wstring& msg)
+{
+	if (m_hwnd_)
+	{
+		std::wstring title = _T("SimpleRayTracing¡ª¡ª") + msg;
+
+		::SetWindowText(m_hwnd_, title.c_str());
+	}
+}
+
 LRESULT App::wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	App *app_ptr = reinterpret_cast<App*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
+	auto *app_ptr = reinterpret_cast<App*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
 	if (app_ptr)
 	{

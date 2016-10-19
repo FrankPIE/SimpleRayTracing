@@ -46,6 +46,8 @@ private:
 
 	LRESULT proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
+	void set_msg(const std::wstring& msg);
+
 private:
 	bool		m_active_;
 	HINSTANCE	m_instance_;
