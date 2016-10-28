@@ -19,27 +19,31 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.	
 //
-// 文件名称:		main.cpp
-// 创建时间:		2016-10-19
+// 文件名称:		Math.hpp
+// 创建时间:		2016-10-27
 //
 // 作者信息:		裴博翔
 // 联系方式:		frankpei1992@gmail.com
 //
-// 作用描述:     程序入口
+// 作用描述:     数学计算辅助库
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <tchar.h>
+#ifndef _MATH3D_HELPER_HPP_
+#define _MATH3D_HELPER_HPP_
 
-#include "App.h"
+#ifndef NOMINMAX
+	#define NOMINMAX
+#endif
 
-#include "RAII.hpp"
+namespace math3D {
 
-#include "Color.hpp"
-
-int main(int argc, char* argv[])
+template <typename T>
+const T& clamp(const T& val, const T& low, const T& high)
 {
-	RECT rect = { CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT + 800, CW_USEDEFAULT + 600 }; 
-
-	auto app_ptr = make_unique<App>(_T("SimpleRayTracing"), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN, rect);
+	return std::max<typename T>(low, std::min<typename T>(high, val));
 }
+
+}
+
+#endif

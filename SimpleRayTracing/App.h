@@ -49,8 +49,8 @@ private:
 	void set_msg(const std::wstring& msg);
 
 private:
-	bool		m_active_;
-	HINSTANCE	m_instance_;
-	HWND		m_hwnd_;	
+	bool		active_;
+	HINSTANCE	instance_;
+	HWND		hwnd_;	
 };
 

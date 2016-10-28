@@ -36,9 +36,9 @@
 #include <tchar.h>
 
 App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HWND parent, const UINT id)
-	: m_active_(false)
-	, m_instance_(nullptr)
-	, m_hwnd_(nullptr)
+	: active_(false)
+	, instance_(nullptr)
+	, hwnd_(nullptr)
 {
 	auto instance = ::GetModuleHandle(nullptr);
 
@@ -65,11 +65,11 @@ App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HW
 
 	ScopeGuard rollback([&]{ ::UnregisterClass(name.c_str(), instance); });
 
-	m_hwnd_ = ::CreateWindow(name.c_str(), name.c_str(), style,
+	hwnd_ = ::CreateWindow(name.c_str(), name.c_str(), style,
 		rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
 		parent, reinterpret_cast<HMENU>(static_cast<INT_PTR>(id)), instance, this);
 
-	if (m_hwnd_ == nullptr)
+	if (hwnd_ == nullptr)
 	{
 		auto error = ::GetLastError();
 
@@ -77,11 +77,11 @@ App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HW
 	}
 	else
 	{
-		::SetWindowLongPtr(m_hwnd_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));		
+		::SetWindowLongPtr(hwnd_, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));		
 	}
 
-	::ShowWindow(m_hwnd_, SW_SHOW);
-	::UpdateWindow(m_hwnd_);
+	::ShowWindow(hwnd_, SW_SHOW);
+	::UpdateWindow(hwnd_);
 
 	rollback.Dismiss();
 
@@ -91,7 +91,7 @@ App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HW
 
 	while (WM_QUIT != msg.message)
 	{
-		auto got_msg = m_active_ ?
+		auto got_msg = active_ ?
 		(::PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != 0) :
 		(::GetMessage(&msg, nullptr, 0, 0) != 0);
 
@@ -105,20 +105,20 @@ App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HW
 
 App::~App()
 {
-	if (m_hwnd_)
+	if (hwnd_)
 	{
-		::DestroyWindow(m_hwnd_);
-		m_hwnd_ = nullptr;
+		::DestroyWindow(hwnd_);
+		hwnd_ = nullptr;
 	}
 }
 
 void App::set_msg(const std::wstring& msg)
 {
-	if (m_hwnd_)
+	if (hwnd_)
 	{
 		std::wstring title = _T("SimpleRayTracing¡ª¡ª") + msg;
 
-		::SetWindowText(m_hwnd_, title.c_str());
+		::SetWindowText(hwnd_, title.c_str());
 	}
 }
 
@@ -139,7 +139,7 @@ LRESULT App::proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	switch (msg)
 	{
 	case WM_ACTIVATE:
-		m_active_ = (WA_INACTIVE != LOWORD(wparam));
+		active_ = (WA_INACTIVE != LOWORD(wparam));
 		break;
 
 	case WM_DESTROY:

@@ -11,6 +11,9 @@
     <Filter Include="Common">
       <UniqueIdentifier>{ff1667ae-49e3-4494-9040-e863f74e531a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{38bb5762-0c7e-4a5c-b199-a2fa8dc57c21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -18,6 +21,9 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Assert.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +35,15 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Assert.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.hpp">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,27 +19,77 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.	
 //
-// 文件名称:		main.cpp
-// 创建时间:		2016-10-19
+// 文件名称:		Assert.cpp
+// 创建时间:		2015-09-16
 //
 // 作者信息:		裴博翔
 // 联系方式:		frankpei1992@gmail.com
 //
-// 作用描述:     程序入口
+// 作用描述:     调试器实现文件
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <tchar.h>
+#include "Assert.hpp"
 
-#include "App.h"
+#ifdef WIN32
+#include <Windows.h>
+#endif
 
-#include "RAII.hpp"
-
-#include "Color.hpp"
-
-int main(int argc, char* argv[])
+void Assert::warn(const std::string& warn_msg) 
 {
-	RECT rect = { CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT + 800, CW_USEDEFAULT + 600 }; 
+	dump_ 
+		<< "Warning : " << warn_msg.c_str()  
+		<< std::endl;
+}
 
-	auto app_ptr = make_unique<App>(_T("SimpleRayTracing"), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN, rect);
+void Assert::debug(const std::string& debug_msg)
+{
+	dump_ 
+		<< "Debug : " << debug_msg.c_str() 
+		<< std::endl;
+
+#ifdef WIN32
+	auto IDD = 
+		::MessageBoxA(nullptr, dump_.str().c_str(), "Assert Box", MB_ABORTRETRYIGNORE | MB_ICONERROR);
+
+	switch (IDD)
+	{
+	case IDABORT:
+		::ExitProcess(-1);
+
+	case IDRETRY:
+		::DebugBreak();
+		break;
+
+	case IDIGNORE:
+		break;
+
+	default:
+		break;
+	}
+#endif
+}
+
+void Assert::fatal(const std::string& fatal_msg)
+{
+	dump_ 
+		<< "Fatal : " << fatal_msg.c_str() 
+		<< std::endl;
+
+#ifdef WIN32
+	MessageBoxA(nullptr, dump_.str().c_str(), "Error", MB_OK | MB_ICONERROR);
+#endif
+
+	ExitProcess(-1);
+}
+
+Assert& Assert::print_context(const std::string& file, const int line)
+{
+	dump_ 
+		<< "File location : " << file.c_str() 
+		<< "\n"
+		<< "Line location : " << line 
+		<< std::endl;
+
+	return *this;
 }
