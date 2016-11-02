@@ -76,8 +76,13 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Assert.hpp" />
+    <ClInclude Include="Color.hpp" />
+    <ClInclude Include="Martix.hpp" />
     <ClInclude Include="Math.hpp" />
+    <ClInclude Include="MathType.h" />
+    <ClInclude Include="Operators.hpp" />
     <ClInclude Include="RAII.hpp" />
+    <ClInclude Include="Ray.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Vector.hpp" />
   </ItemGroup>

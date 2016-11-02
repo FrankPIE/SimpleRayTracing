@@ -19,41 +19,72 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.	
 //
-// 文件名称:		Math.hpp
-// 创建时间:		2016-10-27
+// 文件名称:		Ray.hpp
+// 创建时间:		2016-11-02
 //
 // 作者信息:		裴博翔
 // 联系方式:		frankpei1992@gmail.com
 //
-// 作用描述:     数学计算辅助库
+// 作用描述:     光线类
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _MATH3D_HELPER_HPP_
-#define _MATH3D_HELPER_HPP_
+#ifndef _MATH_RAY3D_HPP_
+#define _MATH_RAY3D_HPP_
 
-#include <cmath>
-
-#ifndef NOMINMAX
-	#define NOMINMAX
-#endif
-
-#if defined(_DEBUG) || defined(DEBUG)
-#define DIV_ZERO_CHECK(divisor) \
-if ((divisor) == 0) {			\
-	printf("division by 0");	\
-}
-#else
-#define DIV_ZERO_CHECK(divisor) 
-#endif
+#include "Vector.hpp"
 
 namespace math3D {
 
-template <typename T>
-const T& clamp(const T& val, const T& low, const T& high)
+template<typename T>
+class Ray3D
 {
-	return std::max<typename T>(low, std::min<typename T>(high, val));
-}
+public:
+	Ray3D() 
+		: origin(0.0)
+		, direction(0.0, 0.0, 1.0) 
+	{ }
+
+	Ray3D(const VectorT<T, 3>& o, const VectorT<T, 3>& d)
+		: origin(o)
+		, direction(d) 
+	{ }
+
+	Ray3D(const Ray3D& ray)
+		: origin(ray.origin)
+		, direction(ray.direction) 
+	{ }
+
+	Ray3D(Ray3D&& ray)
+		: origin(std::move(ray.origin))
+		, direction(std::move(ray.direction)) 
+	{ }
+
+	Ray3D& operator=(const Ray3D& ray)
+	{
+		if (this == &ray)
+			return (*this);
+
+		origin    = ray.origin;
+		direction = ray.direction;
+
+		return (*this);
+	}
+
+	Ray3D& operator=(Ray3D&& ray)
+	{
+		if (this == &ray)
+			return (*this);
+
+		origin    = std::move(ray.origin);
+		direction = std::move(ray.direction);
+
+		return (*this);
+	}
+
+	VectorT<T, 3> origin;
+	VectorT<T, 3> direction;
+};
 
 }
 

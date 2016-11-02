@@ -45,6 +45,21 @@
     <ClInclude Include="Vector.hpp">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="Operators.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Martix.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MathType.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SimpleRayTracing.rc">

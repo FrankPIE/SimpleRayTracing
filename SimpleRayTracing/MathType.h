@@ -19,42 +19,45 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.	
 //
-// 文件名称:		Math.hpp
-// 创建时间:		2016-10-27
+// 文件名称:		MathType.h
+// 创建时间:		2016-11-02
 //
 // 作者信息:		裴博翔
 // 联系方式:		frankpei1992@gmail.com
 //
-// 作用描述:     数学计算辅助库
+// 作用描述:     Math3D头文件声明
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _MATH3D_HELPER_HPP_
-#define _MATH3D_HELPER_HPP_
+#ifndef _MATH3D_TYPE_H_
+#define _MATH3D_TYPE_H_
 
-#include <cmath>
-
-#ifndef NOMINMAX
-	#define NOMINMAX
-#endif
-
-#if defined(_DEBUG) || defined(DEBUG)
-#define DIV_ZERO_CHECK(divisor) \
-if ((divisor) == 0) {			\
-	printf("division by 0");	\
-}
-#else
-#define DIV_ZERO_CHECK(divisor) 
-#endif
+#include "Vector.hpp"
+#include "Martix.hpp"
+#include "Color.hpp"
 
 namespace math3D {
+typedef VectorT < int, 2 > int2;
+typedef VectorT < int, 3 > int3;
+typedef VectorT < int, 4 > int4;
+typedef VectorT < float, 2 > float2;
+typedef VectorT < float, 3 > float3;
+typedef VectorT < float, 4 > float4;
+typedef VectorT < double, 2 > double2;
+typedef VectorT < double, 3 > double3;
+typedef VectorT < double, 4 > double4;
 
-template <typename T>
-const T& clamp(const T& val, const T& low, const T& high)
-{
-	return std::max<typename T>(low, std::min<typename T>(high, val));
-}
-
+typedef MatrixT<int, 2, 2> int2x2;
+typedef MatrixT<int, 3, 3> int3x3;
+typedef MatrixT<int, 4, 4> int4x4;
+		  
+typedef MatrixT<float, 2, 2> float2x2;
+typedef MatrixT<float, 3, 3> float3x3;
+typedef MatrixT<float, 4, 4> float4x4;
+		  
+typedef MatrixT<double, 2, 2> double2x2;
+typedef MatrixT<double, 3, 3> double3x3;
+typedef MatrixT<double, 4, 4> double4x4;
 }
 
 #endif
