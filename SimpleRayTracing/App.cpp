@@ -85,8 +85,6 @@ App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HW
 
 	rollback.Dismiss();
 
-	set_msg(_T("ø’œ–"));
-
 	MSG msg = { nullptr };
 
 	while (WM_QUIT != msg.message)

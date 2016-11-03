@@ -34,7 +34,7 @@
 
 #include "Vector.hpp"
 #include "Martix.hpp"
-#include "Color.hpp"
+#include "Ray.hpp"
 
 namespace math3D {
 typedef VectorT < int, 2 > int2;
@@ -58,6 +58,9 @@ typedef MatrixT<float, 4, 4> float4x4;
 typedef MatrixT<double, 2, 2> double2x2;
 typedef MatrixT<double, 3, 3> double3x3;
 typedef MatrixT<double, 4, 4> double4x4;
+
+typedef Ray3D<float>  RayF;
+typedef Ray3D<double> RayD;
 }
 
 #endif

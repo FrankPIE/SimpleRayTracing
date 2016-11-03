@@ -77,6 +77,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Assert.hpp" />
     <ClInclude Include="Color.hpp" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Martix.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="MathType.h" />
@@ -89,6 +90,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Assert.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

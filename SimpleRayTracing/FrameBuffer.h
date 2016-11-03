@@ -19,73 +19,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.	
 //
-// 文件名称:		Ray.hpp
-// 创建时间:		2016-11-02
+// 文件名称:		FrameBuffer.h
+// 创建时间:		2016-11-03
 //
 // 作者信息:		裴博翔
 // 联系方式:		frankpei1992@gmail.com
 //
-// 作用描述:     光线类
+// 作用描述:     图像Buffer
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _MATH_RAY3D_HPP_
-#define _MATH_RAY3D_HPP_
+#pragma once
 
-#include "Vector.hpp"
-
-namespace math3D {
-
-template<typename T>
-class Ray3D
+class FrameBuffer
 {
 public:
-	Ray3D() 
-		: origin(0)
-		, direction(0, 0, 1) 
-	{ }
-
-	Ray3D(const VectorT<T, 3>& o, const VectorT<T, 3>& d)
-		: origin(o)
-		, direction(d) 
-	{ }
-
-	Ray3D(const Ray3D& ray)
-		: origin(ray.origin)
-		, direction(ray.direction) 
-	{ }
-
-	Ray3D(Ray3D&& ray)
-		: origin(std::move(ray.origin))
-		, direction(std::move(ray.direction)) 
-	{ }
-
-	Ray3D& operator=(const Ray3D& ray)
-	{
-		if (this == &ray)
-			return (*this);
-
-		origin    = ray.origin;
-		direction = ray.direction;
-
-		return (*this);
-	}
-
-	Ray3D& operator=(Ray3D&& ray)
-	{
-		if (this == &ray)
-			return (*this);
-
-		origin    = std::move(ray.origin);
-		direction = std::move(ray.direction);
-
-		return (*this);
-	}
-
-	VectorT<T, 3> origin;
-	VectorT<T, 3> direction;
+	FrameBuffer();
+	~FrameBuffer();
 };
 
-}
-
-#endif

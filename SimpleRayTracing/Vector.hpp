@@ -680,6 +680,14 @@ inline VectorT<T, 3> cross_product(const VectorT<T, 3>& lhs, const VectorT<T, 3>
 }
 
 template <typename T, size_t N>
+inline VectorT<T, N> normalize(VectorT<T, N> vec)
+{
+	vec.normalize();	
+
+	return std::move(vec);
+}
+
+template <typename T, size_t N>
 inline T norm(const VectorT<T, N>& vec)
 {
 	return vec.norm();

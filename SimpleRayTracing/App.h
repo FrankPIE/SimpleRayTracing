@@ -52,5 +52,6 @@ private:
 	bool		active_;
 	HINSTANCE	instance_;
 	HWND		hwnd_;	
+	HBITMAP		bitmap_;
 };
 
