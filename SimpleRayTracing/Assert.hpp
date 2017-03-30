@@ -124,13 +124,9 @@ void Assert::error(const std::string& error_msg, const _E& e)
 
 	#define ENSURE_WARNING(e, m)  e.warn((m)) 
 	#define ENSURE_ASSERT(e, m)   e.debug((m))
-	#define ENSURE_ERROR(e, m)	  e.error((m), std::runtime_error((m));   
-	#define ENSURE_FATAL(e, m)	  e.fatal((m))
 
 	#define VERIFY_WARNING(e, m) ENSURE_WARNING(e, m)
 	#define VERIFY_ASSERT(e, m)  ENSURE_ASSERT(e, m)
-	#define VERIFY_ERROR(e, m)	 ENSURE_ERROR(e, m)
-	#define VERIFY_FATAL(e, m)	 ENSURE_FATAL(e, m)
 #else
 	#define ASSERT_OP(x, next) ASSERT_A.do_nothing().ASSERT_##next
 
@@ -143,13 +139,15 @@ void Assert::error(const std::string& error_msg, const _E& e)
 
 	#define ENSURE_WARNING(e, m)   
 	#define ENSURE_ASSERT(e, m) 
-	#define ENSURE_FATAL(e, m)  
-	#define ENSURE_ERROR(e, m) 
 
 	#define VERIFY_WARNING(e, m)	e
 	#define VERIFY_ASSERT(e, m)		e
-	#define VERIFY_ERROR(e, m)		e
-	#define VERIFY_FATAL(e, m)		e
 #endif
+
+#define ENSURE_ERROR(e, m)	  e.error((m), std::runtime_error((m));   
+#define ENSURE_FATAL(e, m)	  e.fatal((m))
+
+#define VERIFY_ERROR(e, m)	 ENSURE_ERROR(e, m)
+#define VERIFY_FATAL(e, m)	 ENSURE_FATAL(e, m)
 
 

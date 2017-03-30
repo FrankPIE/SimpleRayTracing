@@ -246,6 +246,9 @@ private:
 	VectorT<float, cElemNumber> color_;
 };
 
+const Color cBlack = Color(0.f, 0.f, 0.f, 1.f);
+const Color cWhite = Color(1.f, 1.f, 1.f, 1.f);
+
 }
 
 #endif

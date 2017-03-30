@@ -31,10 +31,40 @@
 
 #pragma once
 
+#include <cstdint>
+#include <vector>
+
+#include "Color.hpp"
+
 class FrameBuffer
 {
+	using type = std::vector<uint8_t>;
+
 public:
-	FrameBuffer();
-	~FrameBuffer();
+	FrameBuffer(long width, long height);
+
+	const void* data() const
+	{
+		return buffer_.data();
+	}
+
+	long GetWidth() const
+	{
+		return  width_;
+	}
+
+	long GetHeight() const
+	{
+		return height_;
+	}
+
+	void SetColor(math3D::Color&& color, uint32_t x, uint32_t y);
+
+	void SetColor(const math3D::Color& color, uint32_t x, uint32_t y);
+
+private:
+	long	width_;
+	long	height_;
+	type	buffer_;
 };
 

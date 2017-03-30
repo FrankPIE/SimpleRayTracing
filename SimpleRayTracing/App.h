@@ -34,6 +34,11 @@
 #include <string>
 
 #include <Windows.h>
+#include "RAII.hpp"
+
+#include <atlimage.h>
+
+class FrameBuffer;
 
 class App
 {
@@ -44,14 +49,19 @@ public:
 private:
 	static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
+	static void _cdecl Render(void* ctx);
+
 	LRESULT proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-	void set_msg(const std::wstring& msg);
+	void on_idle();
 
 private:
 	bool		active_;
 	HINSTANCE	instance_;
 	HWND		hwnd_;	
+
+	HDC			memory_dc_;
 	HBITMAP		bitmap_;
+	UPtr<FrameBuffer> buffer_;
 };
 
