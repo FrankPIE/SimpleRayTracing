@@ -332,7 +332,7 @@ public:
 	{
 		static_assert(M >= N, "M msut bigger or equal than N");
 
-		detail::VectorHelper<T, N>::do_copy(&vec_[0], rhs.data());
+		detail::VectorHelper<T, N>::do_copy(&vec_[0], rhs.Data());
 	}
 
 	template <typename U, int M>
@@ -423,7 +423,7 @@ public:
 		if (this == &rhs)
 			return (*this);
 
-		detail::VectorHelper<T, N>::do_copy(&vec_[0], rhs.data());
+		detail::VectorHelper<T, N>::do_copy(&vec_[0], rhs.Data());
 
 		return (*this);
 	}
@@ -446,7 +446,7 @@ public:
 		if (this == &rhs)
 			return (*this);
 
-		detail::VectorHelper<T, N>::do_move(&vec_[0], rhs.data());
+		detail::VectorHelper<T, N>::do_move(&vec_[0], rhs.Data());
 
 		return (*this);
 	}
@@ -668,7 +668,7 @@ inline void swap(VectorT<T, N>& lhs, VectorT<T, N>& rhs) NOEXCEPT
 template <class T, size_t N>
 inline T dot_product(const VectorT<T, N>& lhs, const VectorT<T, N>& rhs)
 {
-	return detail::VectorHelper<T, N>::dot_product(lhs.data(), rhs.data());
+	return detail::VectorHelper<T, N>::dot_product(lhs.Data(), rhs.Data());
 }
 
 template <typename T>

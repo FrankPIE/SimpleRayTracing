@@ -37,19 +37,25 @@
 FrameBuffer::FrameBuffer(long width, long height )
 	: width_(width)
 	, height_(height)
-	, buffer_(width * height * 4, 255)
+	, buffer_(width * height * 4, 0)
 {
 	
 }
 
-void FrameBuffer::SetColor( math3D::Color &&color, uint32_t x, uint32_t y )
+void FrameBuffer::SetColor( math3D::Color &&color, long x, long y )
 {
 	ENSURE_ASSERT(ENSURE(x < width_ && y < height_)(x)(y), "IndexOutOfBoundsException");
+
+	auto* data_ptr = &buffer_.front() + (width_ * y + x) * 4;
+
+	color.RGBA(data_ptr[2], data_ptr[1], data_ptr[0], data_ptr[3]);
 }
 
-void FrameBuffer::SetColor( const math3D::Color &color, uint32_t x, uint32_t y )
+void FrameBuffer::SetColor( const math3D::Color &color, long x, long y )
 {
-//	ENSURE_ASSERT(ENSURE(x < width_ && y < height_)(x)(y), "IndexOutOfBoundsException");
-//
-//	buffer_[x][y] = color;
+	ENSURE_ASSERT(ENSURE(x < width_ && y < height_)(x)(y), "IndexOutOfBoundsException");
+
+	auto* data_ptr = &buffer_.front() + (width_ * y + x) * 4;
+
+	color.RGBA(data_ptr[2], data_ptr[1], data_ptr[0], data_ptr[3]);
 }

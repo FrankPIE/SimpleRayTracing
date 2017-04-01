@@ -41,7 +41,7 @@
 #if defined(_DEBUG) || defined(DEBUG)
 #define DIV_ZERO_CHECK(divisor) \
 if ((divisor) == 0) {			\
-	printf("division by 0");	\
+	printf("division by 0\n");	\
 }
 #else
 #define DIV_ZERO_CHECK(divisor) 

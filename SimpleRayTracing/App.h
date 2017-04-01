@@ -47,13 +47,13 @@ public:
 	~App();
 
 private:
-	static LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 	static void _cdecl Render(void* ctx);
 
-	LRESULT proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	LRESULT Proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-	void on_idle();
+	void OnIdle();
 
 private:
 	bool		active_;
@@ -62,6 +62,7 @@ private:
 
 	HDC			memory_dc_;
 	HBITMAP		bitmap_;
+	HBITMAP		background_;
 	UPtr<FrameBuffer> buffer_;
 };
 

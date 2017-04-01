@@ -43,7 +43,7 @@ class FrameBuffer
 public:
 	FrameBuffer(long width, long height);
 
-	const void* data() const
+	const void* Data() const
 	{
 		return buffer_.data();
 	}
@@ -58,9 +58,9 @@ public:
 		return height_;
 	}
 
-	void SetColor(math3D::Color&& color, uint32_t x, uint32_t y);
+	void SetColor(math3D::Color&& color, long x, long y);
 
-	void SetColor(const math3D::Color& color, uint32_t x, uint32_t y);
+	void SetColor(const math3D::Color& color, long x, long y);
 
 private:
 	long	width_;

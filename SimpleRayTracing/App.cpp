@@ -36,22 +36,22 @@
 #include "resource.h"
 
 #include "FrameBuffer.h"
+#include "MathType.h"
 
 namespace {
 struct BitmapInfo
 {
 	BitmapInfo(long width, long height)
 	{
-		BITMAPINFO binfo;
-		ZeroMemory(&binfo, sizeof(BITMAPINFO));
+		ZeroMemory(&info, sizeof(BITMAPINFO));
 
-		binfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		binfo.bmiHeader.biBitCount = 32;
-		binfo.bmiHeader.biCompression = BI_RGB;
-		binfo.bmiHeader.biHeight = -height;
-		binfo.bmiHeader.biWidth = width;
-		binfo.bmiHeader.biPlanes = 1;
-		binfo.bmiHeader.biSizeImage = 0;
+		info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		info.bmiHeader.biBitCount = 32;
+		info.bmiHeader.biCompression = BI_RGB;
+		info.bmiHeader.biHeight = -height;
+		info.bmiHeader.biWidth = width;
+		info.bmiHeader.biPlanes = 1;
+		info.bmiHeader.biSizeImage = 0;
 	}
 
 	BITMAPINFO info;
@@ -73,7 +73,7 @@ App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HW
 	wndcls.cbSize = sizeof(WNDCLASSEX);
 
 	wndcls.style		 = CS_HREDRAW | CS_VREDRAW;
-	wndcls.lpfnWndProc   = wnd_proc;
+	wndcls.lpfnWndProc   = WndProc;
 	wndcls.cbWndExtra	 = sizeof(this);
 	wndcls.hInstance	 = instance;
 	wndcls.hIcon		 = LoadIcon(instance, MAKEINTRESOURCE(IDC_ICON));
@@ -109,6 +109,8 @@ App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HW
 
 	HDC dc = ::GetDC(hwnd_);
 
+	background_ = LoadBitmap(instance, MAKEINTRESOURCE(IDB_BK));
+
 	memory_dc_ = CreateCompatibleDC(dc);
 
 	ReleaseDC(hwnd_, dc);
@@ -132,7 +134,7 @@ App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HW
 			::DispatchMessage(&msg);
 		}
 
-		on_idle();
+		OnIdle();
 	}
 }
 
@@ -145,7 +147,7 @@ App::~App()
 	}
 }
 
-void App::on_idle()
+void App::OnIdle()
 {
 	if (hwnd_)
 	{
@@ -159,28 +161,42 @@ void App::on_idle()
 
 		HDC dc = ::GetDC(hwnd_);
 
+		auto backgroud_dc_ = CreateCompatibleDC(dc);
+
+		SelectObject(backgroud_dc_, background_);
+
+		for (auto x = 0; x < width; x += 20)
+		{
+			for (auto y = 0; y < height; y += 20)
+			{
+				BitBlt(dc, x, y, 20, 20, backgroud_dc_, 0, 0, SRCCOPY);
+			}
+		}
+
+		ReleaseDC(hwnd_, backgroud_dc_);
+
 		std::unique_lock<std::mutex> lock(cMutex);
 
 		if (buffer_)
 		{
-			SetDIBits(dc, bitmap_, 0, buffer_->GetHeight(), buffer_->data(), (BITMAPINFO*)&bitmap_info.info, DIB_RGB_COLORS);
+			SetDIBits(dc, bitmap_, 0, buffer_->GetHeight(), buffer_->Data(), (BITMAPINFO*)&bitmap_info.info, DIB_RGB_COLORS);
+
+			BitBlt(dc, 0, 0, width, height, memory_dc_, 0, 0, SRCCOPY);
 		}
 		
 		lock.unlock();
-
-		BitBlt(dc, 0, 0, width, height, memory_dc_, 0, 0, SRCCOPY);
 
 		ReleaseDC(hwnd_, dc);
 	}
 }
 
-LRESULT App::wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT App::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	auto *app_ptr = reinterpret_cast<App*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
 	if (app_ptr)
 	{
-		return app_ptr->proc(hwnd, msg, wparam, lparam);
+		return app_ptr->Proc(hwnd, msg, wparam, lparam);
 	}
 
 	return ::DefWindowProc(hwnd, msg, wparam, lparam);
@@ -197,17 +213,62 @@ void App::Render( void *ctx )
 		RECT client_rect;
 		::GetClientRect(context->hwnd_, &client_rect);
 
-		auto width  = client_rect.right - client_rect.left;
+		auto width  = client_rect.right  - client_rect.left;
 		auto height = client_rect.bottom - client_rect.top;
 
 		context->buffer_ = std::make_unique<FrameBuffer>(width, height);
+
+		if (context->buffer_)
+		{
+			math3D::float3 lower_left_corner(-2.0f, -1.0f, -1.0f);
+			math3D::float3 horizontal(2.0f, 0.0f, 0.0f);
+			math3D::float3 vertical(0.0f, 2.0f, 0.0f);
+			math3D::float3 origin(0.0f, 0.0f, 0.0f);
+
+			for (auto x = 0L; x < context->buffer_->GetWidth(); ++x)
+			{
+				for (auto y = 0L; y < context->buffer_->GetHeight(); ++y)
+				{
+					float u = float(x) / float(context->buffer_->GetWidth());
+					float v = float(y) / float(context->buffer_->GetHeight());
+
+					math3D::RayF ray(origin, lower_left_corner + u * horizontal + v * vertical);
+
+					math3D::float3 unit_direction = normalize(ray.direction);
+
+					float t = 0.5f * (unit_direction.y() + 1.f);
+
+					math3D::float3 c = (1.f - t) * math3D::float3(1.f, 1.f, 1.f) + t * math3D::float3(0.5f, 0.7f, 1.f);
+
+					std::unique_lock<std::mutex> lock(cMutex);
+
+					context->buffer_->SetColor(math3D::Color(c.x(), c.y(), c.z(), 1.0f), x, y);
+
+					lock.unlock();
+				}
+			}
+		}
 	}
 }
 
-LRESULT App::proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT App::Proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	switch (msg)
 	{
+	case WM_COMMAND:
+		{
+			switch (LOWORD(wparam))
+			{
+			case ID_BEGIN_RENDER:	//Begin Render
+				_beginthread(Render, 0, this);
+				break;
+
+			default:
+				break;
+			}
+		}
+		break;
+
 	case WM_SIZE:
 		{
 			auto cx = LOWORD(lparam);
