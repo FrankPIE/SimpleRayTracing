@@ -161,31 +161,31 @@ void App::OnIdle()
 
 		HDC dc = ::GetDC(hwnd_);
 
-		auto backgroud_dc_ = CreateCompatibleDC(dc);
-
-		SelectObject(backgroud_dc_, background_);
-
-		for (auto x = 0; x < width; x += 20)
-		{
-			for (auto y = 0; y < height; y += 20)
-			{
-				BitBlt(dc, x, y, 20, 20, backgroud_dc_, 0, 0, SRCCOPY);
-			}
-		}
-
-		ReleaseDC(hwnd_, backgroud_dc_);
-
-		std::unique_lock<std::mutex> lock(cMutex);
-
 		if (buffer_)
 		{
+			std::unique_lock<std::mutex> lock(cMutex);
 			SetDIBits(dc, bitmap_, 0, buffer_->GetHeight(), buffer_->Data(), (BITMAPINFO*)&bitmap_info.info, DIB_RGB_COLORS);
+			lock.unlock();
 
 			BitBlt(dc, 0, 0, width, height, memory_dc_, 0, 0, SRCCOPY);
 		}
-		
-		lock.unlock();
+		else
+		{
+			auto backgroud_dc_ = CreateCompatibleDC(dc);
 
+			SelectObject(backgroud_dc_, background_);
+
+			for (auto x = 0; x < width; x += 20)
+			{
+				for (auto y = 0; y < height; y += 20)
+				{
+					BitBlt(dc, x, y, 20, 20, backgroud_dc_, 0, 0, SRCCOPY);
+				}
+			}
+
+			DeleteDC(backgroud_dc_);
+		}
+		
 		ReleaseDC(hwnd_, dc);
 	}
 }
@@ -208,15 +208,21 @@ void App::Render( void *ctx )
 
 	if (context)
 	{
-		context->buffer_.reset();
-
 		RECT client_rect;
 		::GetClientRect(context->hwnd_, &client_rect);
 
 		auto width  = client_rect.right  - client_rect.left;
 		auto height = client_rect.bottom - client_rect.top;
 
-		context->buffer_ = std::make_unique<FrameBuffer>(width, height);
+		if (context->buffer_)
+		{
+			context->buffer_->Clear();
+			context->buffer_->Resize(width, height);
+		}
+		else
+		{
+			context->buffer_ = std::make_unique<FrameBuffer>(width, height);
+		}
 
 		if (context->buffer_)
 		{

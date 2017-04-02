@@ -42,6 +42,24 @@ FrameBuffer::FrameBuffer(long width, long height )
 	
 }
 
+FrameBuffer::~FrameBuffer()
+{
+
+}
+
+void FrameBuffer::Clear()
+{
+	buffer_.clear();
+}
+
+void FrameBuffer::Resize(long width, long height)
+{
+	width_ = width;
+	height_ = height;
+
+	buffer_.resize(width_ * height * 4, 0);
+}
+
 void FrameBuffer::SetColor( math3D::Color &&color, long x, long y )
 {
 	ENSURE_ASSERT(ENSURE(x < width_ && y < height_)(x)(y), "IndexOutOfBoundsException");
