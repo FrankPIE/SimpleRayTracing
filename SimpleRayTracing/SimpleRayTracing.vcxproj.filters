@@ -14,6 +14,9 @@
     <Filter Include="Math">
       <UniqueIdentifier>{38bb5762-0c7e-4a5c-b199-a2fa8dc57c21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{eedc7c42-be76-484b-8ce5-96d97847a65f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -65,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="FrameBuffer.h">
       <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.hpp">
+      <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

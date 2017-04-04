@@ -87,6 +87,7 @@
     <ClInclude Include="RAII.hpp" />
     <ClInclude Include="Ray.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Sphere.hpp" />
     <ClInclude Include="Vector.hpp" />
   </ItemGroup>
   <ItemGroup>

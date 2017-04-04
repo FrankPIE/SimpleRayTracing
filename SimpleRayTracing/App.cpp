@@ -57,7 +57,7 @@ struct BitmapInfo
 	BITMAPINFO info;
 };
 	
-std::mutex cMutex;
+std::mutex  cMutex;
 }
 
 App::App(const std::wstring& name, const DWORD style, const RECT& rect, const HWND parent, const UINT id)
@@ -226,10 +226,10 @@ void App::Render( void *ctx )
 
 		if (context->buffer_)
 		{
-			math3D::float3 lower_left_corner(-2.0f, -1.0f, -1.0f);
-			math3D::float3 horizontal(2.0f, 0.0f, 0.0f);
-			math3D::float3 vertical(0.0f, 2.0f, 0.0f);
-			math3D::float3 origin(0.0f, 0.0f, 0.0f);
+			math3D::double3 lower_left_corner(-2.0, -1.0, -1.0);
+			math3D::double3 horizontal(2.0, 0.0, 0.0);
+			math3D::double3 vertical(0.0, 2.0, 0.0);
+			math3D::double3 origin(0.0, 0.0, 0.0);
 
 			for (auto x = 0L; x < context->buffer_->GetWidth(); ++x)
 			{
@@ -238,22 +238,28 @@ void App::Render( void *ctx )
 					float u = float(x) / float(context->buffer_->GetWidth());
 					float v = float(y) / float(context->buffer_->GetHeight());
 
-					math3D::RayF ray(origin, lower_left_corner + u * horizontal + v * vertical);
+					math3D::RayD ray(origin, lower_left_corner + u * horizontal + v * vertical);
 
-					math3D::float3 unit_direction = normalize(ray.direction);
+					math3D::double3 unit_direction = normalize(ray.direction);
 
-					float t = 0.5f * (unit_direction.y() + 1.f);
+					double t = 0.5 * (unit_direction.y() + 1.0);
 
-					math3D::float3 c = (1.f - t) * math3D::float3(1.f, 1.f, 1.f) + t * math3D::float3(0.5f, 0.7f, 1.f);
+					math3D::double3 c = (1. - t) * math3D::double3(1., 1., 1.) + t * math3D::double3(0.5, 0.7, 1.);
 
-					std::unique_lock<std::mutex> lock(cMutex);
+					std::lock_guard<std::mutex> lock(cMutex);
 
-					context->buffer_->SetColor(math3D::Color(c.x(), c.y(), c.z(), 1.0f), x, y);
-
-					lock.unlock();
+					context->buffer_->SetColor(math3D::Color(float(c.x()), float(c.y()), float(c.z()), 1.0f), x, y);
 				}
 			}
 		}
+	}
+}
+
+void App::TerminateRenderThread()
+{
+	if (render_thread_)
+	{
+		render_thread_.reset();
 	}
 }
 
@@ -266,7 +272,14 @@ LRESULT App::Proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			switch (LOWORD(wparam))
 			{
 			case ID_BEGIN_RENDER:	//Begin Render
-				_beginthread(Render, 0, this);
+				TerminateRenderThread();
+
+				if (!render_thread_)
+				{
+					render_thread_ = std::make_unique<std::thread>(Render, this);
+	
+					render_thread_->detach();
+				}
 				break;
 
 			default:
@@ -302,6 +315,8 @@ LRESULT App::Proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		break;
 
 	case WM_DESTROY:
+		TerminateRenderThread();
+
 		::PostQuitMessage(0);
 		break;
 

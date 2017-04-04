@@ -34,9 +34,11 @@
 #include <string>
 
 #include <Windows.h>
-#include "RAII.hpp"
 
 #include <atlimage.h>
+#include <thread>
+
+#include "RAII.hpp"
 
 class FrameBuffer;
 
@@ -49,7 +51,9 @@ public:
 private:
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-	static void _cdecl Render(void* ctx);
+	static void Render(void* ctx);
+
+	void TerminateRenderThread();
 
 	LRESULT Proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
@@ -63,6 +67,9 @@ private:
 	HDC			memory_dc_;
 	HBITMAP		bitmap_;
 	HBITMAP		background_;
+
+	UPtr<std::thread> render_thread_;
+
 	UPtr<FrameBuffer> buffer_;
 };
 
