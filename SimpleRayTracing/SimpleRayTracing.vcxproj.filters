@@ -31,6 +31,7 @@
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>App</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -71,6 +72,13 @@
     </ClInclude>
     <ClInclude Include="Sphere.hpp">
       <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="HitAble.hpp">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="drand48.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -34,8 +34,9 @@
 #include <string>
 
 #include <Windows.h>
-
 #include <atlimage.h>
+
+#include <vector>
 #include <thread>
 
 #include "RAII.hpp"

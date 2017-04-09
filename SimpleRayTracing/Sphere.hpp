@@ -32,14 +32,11 @@
 
 #pragma once
 
-#include "Ray.hpp"
-#include "Vector.hpp"
-
-template <typename T>
-using SphereHitTestResult = std::tuple<int32_t, math3D::VectorT<T, 3>, math3D::VectorT<T, 3>>;
+#include "HitAble.hpp"
 
 template <typename T>
 class Sphere
+	: public HitAble<T>
 {
 public:
 	using CenterType = math3D::VectorT<typename T, 3>;
@@ -87,16 +84,44 @@ public:
 		return (*this);
 	}
 
+	virtual bool HitTest(const math3D::Ray3D<T>& ray, T t_min, T t_max, HitRecord<T>& rec) const
+	{
+		auto oc = ray.origin - center;
+
+		auto a = math3D::dot_product(ray.direction, ray.direction);
+		auto b = T(2) * math3D::dot_product(oc, ray.direction);
+		auto c = math3D::dot_product(oc, oc) - radius * radius;
+
+		auto discriminant = b * b - 4 * a * c;
+
+		if (!(discriminant < 0))
+		{
+			auto temp_t = (-b - sqrt(discriminant)) / T(2.0 * a);
+
+			if (temp_t < t_max && temp_t > t_min)
+			{
+				rec.t = temp_t;
+				rec.point = ray.point_at(rec.t);
+				rec.normal = math3D::normalize(rec.point - center);
+
+				return true;
+			}
+
+			temp_t = (-b + sqrt(discriminant)) / T(2.0 * a);
+
+			if (temp_t < t_max && temp_t > t_min)
+			{
+				rec.t = temp_t;
+				rec.point = ray.point_at(rec.t);
+				rec.normal = math3D::normalize(rec.point - center);
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	CenterType	center;
 	T			radius;
 };
-
-template <typename T>
-SphereHitTestResult<T> SphereHitTest(const Sphere<T>& sphere, const math3D::Ray3D<T>& ray)
-{
-	SphereHitTestResult<T> result;
-
-	//TODO::
-
-	return std::move(result);
-}

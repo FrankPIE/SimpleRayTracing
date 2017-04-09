@@ -39,7 +39,7 @@
 
 int main(int argc, char* argv[])
 {
-	RECT rect = { CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT + 800, CW_USEDEFAULT + 650 }; 
+	RECT rect = { CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT + 800, CW_USEDEFAULT + 800 }; 
 
 	auto app_ptr = std::make_unique<App>(_T("SimpleRayTracing"), WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN, rect);
 }

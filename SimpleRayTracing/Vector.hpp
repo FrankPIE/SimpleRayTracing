@@ -668,7 +668,7 @@ inline void swap(VectorT<T, N>& lhs, VectorT<T, N>& rhs) NOEXCEPT
 template <class T, size_t N>
 inline T dot_product(const VectorT<T, N>& lhs, const VectorT<T, N>& rhs)
 {
-	return detail::VectorHelper<T, N>::dot_product(lhs.Data(), rhs.Data());
+	return detail::VectorHelper<T, N>::dot_product(lhs.data(), rhs.data());
 }
 
 template <typename T>

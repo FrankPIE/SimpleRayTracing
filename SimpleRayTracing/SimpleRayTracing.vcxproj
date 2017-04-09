@@ -78,8 +78,11 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Assert.hpp" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Color.hpp" />
+    <ClInclude Include="drand48.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="HitAble.hpp" />
     <ClInclude Include="Martix.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="MathType.h" />
@@ -93,6 +96,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Assert.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

@@ -82,6 +82,11 @@ public:
 		return (*this);
 	}
 
+	VectorT<T, 3> point_at(const T t) const
+	{
+		return origin + t * direction;
+	}
+
 	VectorT<T, 3> origin;
 	VectorT<T, 3> direction;
 };

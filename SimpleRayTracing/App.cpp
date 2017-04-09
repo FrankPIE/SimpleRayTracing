@@ -31,12 +31,19 @@
 
 #include "App.h"
 
+#include <vector>
 #include <mutex>
+#include <limits>
+#include <algorithm>
 
 #include "resource.h"
 
+#include "drand48.h"
+
 #include "FrameBuffer.h"
 #include "MathType.h"
+#include "Sphere.hpp"
+#include "Camera.h"
 
 namespace {
 struct BitmapInfo
@@ -56,7 +63,53 @@ struct BitmapInfo
 
 	BITMAPINFO info;
 };
-	
+
+math3D::double3 GetColor(const math3D::RayD& ray, std::vector<Sphere<double>>& spheres)
+{
+	math3D::double3 c(0.0, 0.0, 0.0);
+
+	double t_position = DBL_MAX;
+	HitRecord<double> result;
+
+	HitRecord<double> real_result;
+
+	for (auto sphere : spheres)
+	{
+		if (sphere.HitTest(ray, 0.0, DBL_MAX, result))
+		{
+			if (result.t < t_position)
+			{
+				t_position = result.t;
+
+				real_result = result;
+				
+				real_result.normal.y() = -real_result.normal.y();
+				real_result.point.y() = -real_result.normal.y();
+			}
+		}
+	}
+
+	if (t_position == DBL_MAX)
+	{
+		math3D::double3 unit_direction = normalize(ray.direction);
+
+		double t = 0.5 * (-unit_direction.y() + 1.0);
+
+		return (1. - t) * math3D::double3(1., 1., 1.) + t * math3D::double3(0.5, 0.7, 1.);
+	}
+
+	math3D::double3 point_in_unit_sphere;
+
+	do
+	{
+		point_in_unit_sphere = 2.0 * math3D::double3(drand48(), drand48(), drand48()) - math3D::double3(1.0, 1.0, 1.0);
+	} while (math3D::dot_product(point_in_unit_sphere, point_in_unit_sphere) >= 1.0);
+
+	math3D::double3 target = real_result.point + real_result.normal + point_in_unit_sphere;
+
+	return 0.5 * GetColor(math3D::RayD(real_result.point, target - real_result.point), spheres);
+}
+
 std::mutex  cMutex;
 }
 
@@ -226,25 +279,41 @@ void App::Render( void *ctx )
 
 		if (context->buffer_)
 		{
-			math3D::double3 lower_left_corner(-2.0, -1.0, -1.0);
-			math3D::double3 horizontal(2.0, 0.0, 0.0);
-			math3D::double3 vertical(0.0, 2.0, 0.0);
-			math3D::double3 origin(0.0, 0.0, 0.0);
+#ifdef _DEBUG
+			const int number_sample = 10;
+#else
+			const int number_sample = 100;
+#endif
 
+			Camera camera(math3D::double3(0.0, 0.0, 0.0),
+				math3D::double3(-1.0, -1.0, -1.0),
+				math3D::double3(2.0, 0.0, 0.0),
+				math3D::double3(0.0, 2.0, 0.0));
+
+			std::vector<Sphere<double>> spheres;
+
+			spheres.push_back(Sphere<double>(math3D::double3(0.0, 100.5, -1.0), 100));
+			spheres.push_back(Sphere<double>(math3D::double3(0.0, 0.0, -1.0), 0.5));
+					
 			for (auto x = 0L; x < context->buffer_->GetWidth(); ++x)
 			{
 				for (auto y = 0L; y < context->buffer_->GetHeight(); ++y)
-				{
-					float u = float(x) / float(context->buffer_->GetWidth());
-					float v = float(y) / float(context->buffer_->GetHeight());
+				{					
+					math3D::double3 c(0.0, 0.0, 0.0);
 
-					math3D::RayD ray(origin, lower_left_corner + u * horizontal + v * vertical);
+					for (int sample_index = 0; sample_index < number_sample; ++sample_index)
+					{
+						float u = float(x + drand48()) / float(context->buffer_->GetWidth());
+						float v = float(y + drand48()) / float(context->buffer_->GetHeight());
 
-					math3D::double3 unit_direction = normalize(ray.direction);
+						auto ray = camera.ray(u, v);
 
-					double t = 0.5 * (unit_direction.y() + 1.0);
+						c += GetColor(ray, spheres);
+					}
 
-					math3D::double3 c = (1. - t) * math3D::double3(1., 1., 1.) + t * math3D::double3(0.5, 0.7, 1.);
+					c /= double(number_sample);
+
+					c = math3D::double3(sqrt(c.x()), sqrt(c.y()), sqrt(c.z()));
 
 					std::lock_guard<std::mutex> lock(cMutex);
 
