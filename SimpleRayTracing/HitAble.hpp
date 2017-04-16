@@ -34,6 +34,8 @@
 
 #include "Ray.hpp"
 
+template<typename T>
+class Material;
 
 template<typename T>
 struct HitRecord
@@ -41,9 +43,10 @@ struct HitRecord
 	using value_type = T;
 	using vec3_type  = math3D::VectorT<T, 3>;
 
-	value_type	t;
-	vec3_type	point;
-	vec3_type	normal;
+	value_type			t;
+	vec3_type			point;
+	vec3_type			normal;
+	SPtr<Material<T>>	material_ptr;
 };
 
 template <typename T>

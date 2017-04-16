@@ -84,6 +84,7 @@
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="HitAble.hpp" />
     <ClInclude Include="Martix.hpp" />
+    <ClInclude Include="Material.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="MathType.h" />
     <ClInclude Include="Operators.hpp" />

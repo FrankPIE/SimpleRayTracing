@@ -64,50 +64,48 @@ struct BitmapInfo
 	BITMAPINFO info;
 };
 
-math3D::double3 GetColor(const math3D::RayD& ray, std::vector<Sphere<double>>& spheres)
+math3D::double3 GetColor(const math3D::RayD& ray, std::vector<Sphere<double>>& spheres, int depth)
 {
 	math3D::double3 c(0.0, 0.0, 0.0);
 
+	bool is_hit = false;
 	double t_position = DBL_MAX;
 	HitRecord<double> result;
 
-	HitRecord<double> real_result;
+	HitRecord<double> temp_result;
 
 	for (auto sphere : spheres)
 	{
-		if (sphere.HitTest(ray, 0.0, DBL_MAX, result))
+		if (sphere.HitTest(ray, 0.0001, t_position, temp_result))
 		{
-			if (result.t < t_position)
+			is_hit = true;
+			if (temp_result.t < t_position)
 			{
-				t_position = result.t;
+				t_position = temp_result.t;
 
-				real_result = result;
-				
-				real_result.normal.y() = -real_result.normal.y();
-				real_result.point.y() = -real_result.normal.y();
+				result = temp_result;
 			}
 		}
 	}
 
-	if (t_position == DBL_MAX)
+	if (!is_hit)
 	{
-		math3D::double3 unit_direction = normalize(ray.direction);
+		math3D::double3 unit_direction = math3D::normalize<double, 3>(ray.direction);
 
-		double t = 0.5 * (-unit_direction.y() + 1.0);
+		double t = 0.5 * (unit_direction.y() + 1.0);
 
 		return (1. - t) * math3D::double3(1., 1., 1.) + t * math3D::double3(0.5, 0.7, 1.);
 	}
 
-	math3D::double3 point_in_unit_sphere;
+	math3D::RayD	scattered;
+	math3D::double3 attenuation;
 
-	do
+	if (depth < 50 && result.material_ptr && result.material_ptr->Scatter(ray, result, attenuation, scattered))
 	{
-		point_in_unit_sphere = 2.0 * math3D::double3(drand48(), drand48(), drand48()) - math3D::double3(1.0, 1.0, 1.0);
-	} while (math3D::dot_product(point_in_unit_sphere, point_in_unit_sphere) >= 1.0);
-
-	math3D::double3 target = real_result.point + real_result.normal + point_in_unit_sphere;
-
-	return 0.5 * GetColor(math3D::RayD(real_result.point, target - real_result.point), spheres);
+		return attenuation * GetColor(scattered, spheres, depth + 1);
+	}
+	
+	return math3D::double3(0.0, 0.0, 0.0);
 }
 
 std::mutex  cMutex;
@@ -286,15 +284,17 @@ void App::Render( void *ctx )
 #endif
 
 			Camera camera(math3D::double3(0.0, 0.0, 0.0),
-				math3D::double3(-1.0, -1.0, -1.0),
-				math3D::double3(2.0, 0.0, 0.0),
-				math3D::double3(0.0, 2.0, 0.0));
+				math3D::double3(-2.0, -2.0, -1.0),
+				math3D::double3(4.0, 0.0, 0.0),
+				math3D::double3(0.0, 4.0, 0.0));
 
 			std::vector<Sphere<double>> spheres;
 
-			spheres.push_back(Sphere<double>(math3D::double3(0.0, 100.5, -1.0), 100));
-			spheres.push_back(Sphere<double>(math3D::double3(0.0, 0.0, -1.0), 0.5));
-					
+			spheres.push_back(Sphere<double>(math3D::double3(0.0, 0.0, -1.0), 0.5, std::make_shared<Lambertian<double>>(math3D::double3(0.8, 0.3, 0.3))));
+//			spheres.push_back(Sphere<double>(math3D::double3(0.0, -100.5, -1.0), 100, std::make_shared<Lambertian<double>>(math3D::double3(0.8, 0.8, 0.0))));
+//			spheres.push_back(Sphere<double>(math3D::double3(1.0, 0.0, -2.0), 0.5, std::make_shared<Metal<double>>(math3D::double3(0.8, 0.6, 0.2))));
+//			spheres.push_back(Sphere<double>(math3D::double3(-1.0, 0.0, -2.0), 0.5, std::make_shared<Metal<double>>(math3D::double3(0.8, 0.8, 0.8))));
+
 			for (auto x = 0L; x < context->buffer_->GetWidth(); ++x)
 			{
 				for (auto y = 0L; y < context->buffer_->GetHeight(); ++y)
@@ -306,13 +306,13 @@ void App::Render( void *ctx )
 						float u = float(x + drand48()) / float(context->buffer_->GetWidth());
 						float v = float(y + drand48()) / float(context->buffer_->GetHeight());
 
-						auto ray = camera.ray(u, v);
+						auto ray = camera.ray(u, 1.0 - v);
 
-						c += GetColor(ray, spheres);
+						c += GetColor(ray, spheres, 0);
 					}
 
 					c /= double(number_sample);
-
+					
 					c = math3D::double3(sqrt(c.x()), sqrt(c.y()), sqrt(c.z()));
 
 					std::lock_guard<std::mutex> lock(cMutex);

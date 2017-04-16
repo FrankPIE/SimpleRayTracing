@@ -41,8 +41,8 @@ class Ray3D
 {
 public:
 	Ray3D() 
-		: origin(0)
-		, direction(0, 0, 1) 
+		: origin(T(0))
+		, direction(T(0), T(0), T(1))
 	{ }
 
 	Ray3D(const VectorT<T, 3>& o, const VectorT<T, 3>& d)

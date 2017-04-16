@@ -17,6 +17,9 @@
     <Filter Include="Geometry">
       <UniqueIdentifier>{eedc7c42-be76-484b-8ce5-96d97847a65f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{5154c993-c0df-4612-8b1c-665c41e5ab65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -31,7 +34,9 @@
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Camera.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h">
@@ -76,9 +81,14 @@
     <ClInclude Include="HitAble.hpp">
       <Filter>Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="drand48.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.hpp">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

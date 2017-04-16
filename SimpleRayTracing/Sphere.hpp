@@ -33,6 +33,7 @@
 #pragma once
 
 #include "HitAble.hpp"
+#include "Material.hpp"
 
 template <typename T>
 class Sphere
@@ -42,24 +43,28 @@ public:
 	using CenterType = math3D::VectorT<typename T, 3>;
 
 public:
-	Sphere(const CenterType& c, T r)
+	Sphere(const CenterType& c, T r, SPtr<Material<T>> ptr)
 		: center(c)
 		, radius(r) 
+		, material(ptr)
 	{ }
 
-	Sphere(math3D::float3&& c, T r)
+	Sphere(math3D::float3&& c, T r, SPtr<Material<T>> ptr)
 		: center(std::move(c))
 		, radius(r)
+		, material(ptr)
 	{ }
 
 	Sphere(const Sphere& sphere)
 		: center(sphere.center)
 		, radius(sphere.radius)
+		, material(sphere.material)
 	{ }
 
 	Sphere(Sphere&& sphere)
 		: center(std::move(sphere.center))
 		, radius(std::move(sphere.radius))
+		, material(std::move(sphere.material))
 	{ }
 
 	Sphere& operator=(const Sphere& sphere)
@@ -69,6 +74,7 @@ public:
 
 		center = sphere.center;
 		radius = sphere.radius;
+		material = sphere.material;
 
 		return (*this);
 	}
@@ -80,6 +86,7 @@ public:
 
 		center = std::move(sphere.center);
 		radius = std::move(sphere.radius);
+		material = std::move(sphere.material);
 
 		return (*this);
 	}
@@ -95,7 +102,7 @@ public:
 		auto discriminant = b * b - 4 * a * c;
 
 		if (!(discriminant < 0))
-		{
+		{		
 			auto temp_t = (-b - sqrt(discriminant)) / T(2.0 * a);
 
 			if (temp_t < t_max && temp_t > t_min)
@@ -103,6 +110,7 @@ public:
 				rec.t = temp_t;
 				rec.point = ray.point_at(rec.t);
 				rec.normal = math3D::normalize(rec.point - center);
+				rec.material_ptr = material;
 
 				return true;
 			}
@@ -114,6 +122,7 @@ public:
 				rec.t = temp_t;
 				rec.point = ray.point_at(rec.t);
 				rec.normal = math3D::normalize(rec.point - center);
+				rec.material_ptr = material;
 
 				return true;
 			}
@@ -122,6 +131,7 @@ public:
 		return false;
 	}
 
-	CenterType	center;
-	T			radius;
+	CenterType			center;
+	T					radius;
+	SPtr<Material<T>>	material;
 };
