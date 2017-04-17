@@ -93,15 +93,16 @@ class Metal
 	: public Material<T>
 {
 public:
-	Metal(const math3D::VectorT<T, 3>& a)
+	Metal(const math3D::VectorT<T, 3>& a, const T f)
 		: albedo(a)
+		, fuzz(f < T(1) ? f : T(1))
 	{ }
 
 	virtual bool Scatter(const math3D::Ray3D<T>& ray_in, const HitRecord<T>& result, math3D::VectorT<T, 3>& attenuation, math3D::Ray3D<T>& scattered) const
 	{
 		auto reflected = Reflect(math3D::normalize(ray_in.direction), result.normal);
 
-		scattered = math3D::Ray3D<T>(result.point, reflected - result.point);
+		scattered = math3D::Ray3D<T>(result.point, reflected + fuzz * RandomInUnitSphere<T>());
 
 		attenuation = albedo;
 
@@ -109,5 +110,6 @@ public:
 	}
 
 	math3D::VectorT<T, 3> albedo;
+	T					  fuzz;
 };
 
