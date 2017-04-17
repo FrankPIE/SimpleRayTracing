@@ -484,12 +484,12 @@ public:
 		(*this) /= length();
 	}
 
-	T length_square()
+	T length_square() const
 	{
 		return (detail::VectorHelper<T, N>::length_square(data()));
 	}
 
-	T length()
+	T length() const
 	{
 		return ::sqrt(length_square());
 	}
@@ -504,7 +504,7 @@ public:
 	{
 		VectorT temp(*this);
 
-		detail::VectorHelper<T, N>::do_negative(&vec_[0], data());
+		detail::VectorHelper<T, N>::do_negative(&temp.vec_[0], data());
 
 		return std::move(temp);
 	}
