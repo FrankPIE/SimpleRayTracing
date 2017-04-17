@@ -110,6 +110,7 @@ public:
 				rec.t = temp_t;
 				rec.point = ray.point_at(rec.t);
 				rec.normal = math3D::normalize(rec.point - center);
+
 				rec.material_ptr = material;
 
 				return true;
@@ -122,6 +123,7 @@ public:
 				rec.t = temp_t;
 				rec.point = ray.point_at(rec.t);
 				rec.normal = math3D::normalize(rec.point - center);
+
 				rec.material_ptr = material;
 
 				return true;

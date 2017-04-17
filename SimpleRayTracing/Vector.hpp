@@ -481,9 +481,7 @@ public:
 
 	void normalize()
 	{
-		VectorT temp(*this);
-
-		(*this) / (temp * temp);
+		(*this) /= length();
 	}
 
 	T length_square()
@@ -684,7 +682,7 @@ inline VectorT<T, N> normalize(VectorT<T, N> vec)
 {
 	vec.normalize();	
 
-	return std::move(vec);
+	return std::move(vec);	
 }
 
 template <typename T, size_t N>

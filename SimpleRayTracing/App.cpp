@@ -291,9 +291,9 @@ void App::Render( void *ctx )
 			std::vector<Sphere<double>> spheres;
 
 			spheres.push_back(Sphere<double>(math3D::double3(0.0, 0.0, -1.0), 0.5, std::make_shared<Lambertian<double>>(math3D::double3(0.8, 0.3, 0.3))));
-//			spheres.push_back(Sphere<double>(math3D::double3(0.0, -100.5, -1.0), 100, std::make_shared<Lambertian<double>>(math3D::double3(0.8, 0.8, 0.0))));
-//			spheres.push_back(Sphere<double>(math3D::double3(1.0, 0.0, -2.0), 0.5, std::make_shared<Metal<double>>(math3D::double3(0.8, 0.6, 0.2))));
-//			spheres.push_back(Sphere<double>(math3D::double3(-1.0, 0.0, -2.0), 0.5, std::make_shared<Metal<double>>(math3D::double3(0.8, 0.8, 0.8))));
+			spheres.push_back(Sphere<double>(math3D::double3(0.0, -100.5, -1.0), 100, std::make_shared<Lambertian<double>>(math3D::double3(0.8, 0.8, 0.0))));
+			spheres.push_back(Sphere<double>(math3D::double3(1.0, 0.0, -1.0), 0.5, std::make_shared<Metal<double>>(math3D::double3(0.8, 0.6, 0.2))));
+			spheres.push_back(Sphere<double>(math3D::double3(-1.0, 0.0, -1.0), 0.5, std::make_shared<Metal<double>>(math3D::double3(0.8, 0.8, 0.8))));
 
 			for (auto x = 0L; x < context->buffer_->GetWidth(); ++x)
 			{
