@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual Studio 2017
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleRayTracing", "SimpleRayTracing.vcxproj", "{B9499A30-5577-44D9-882D-B8811BE2A83B}"
 EndProject
 Global
